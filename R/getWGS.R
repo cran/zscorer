@@ -6,15 +6,17 @@
 #' for a single child data.
 #'
 #' @param sexObserved Sex of child (1 = Male; 2 = Female)
-#' @param firstPart Weight (kg; for WHZ and WAZ) or height (cm; for HAZ)
-#' @param secondPart Age (months; for HAZ and WAZ) or height (cm; for WHZ)
+#' @param firstPart Weight (in kg for WHZ and WAZ) or height (in cm for HAZ)
+#' @param secondPart Age (in months for HAZ and WAZ) or height (in cm for WHZ)
 #' @param index One of "wfh", "hfa", "wfa" (specifies the required index)
 #' @return z-score of the anthropometric index selected
 #'
+#' @section Warning:
 #' The function fails messily when \code{secondPart} is outside of the range
 #' given in the WGS reference (i.e. 45 to 120 cm for height and 0 to 60 months
 #' for age). It is up to you to check the ranges of your data.
 #'
+#' @section Reminders:
 #' The reference data for W/H assumes supine length is used for children with a
 #' standing height below 85cm
 #'
@@ -25,6 +27,13 @@
 #' Weights should be specified in kg to available precision
 #'
 #' The function requires reference data \code{wgsData} included in this package
+#'
+#' @section Note:
+#' This is a legacy function from the first CRAN release of \code{zscorer}
+#' which focused mainly on the calculation of z-scores for weight-for-age,
+#' weight-for-height and height-for-age. This function has been kept in the package
+#' to ensure that existing analysis workflows implemented using the function
+#' continue to work.
 #'
 #' @examples
 #'   # apply \code{getWGS()} to a make believe 52 month old male child with weight of

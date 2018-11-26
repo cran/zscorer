@@ -1,41 +1,64 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# zscorer: Weight-for-age, height-for-age and weight-for-height z-score calculator <img src="man/figures/zscorer.png" align="right" />
+# zscorer: Weight-for-age, height-for-age, weight-for-height, BMI-for-age, head circumference-for-age, arm circumference-for-age, subscapular skinfold-for-age and triceps skinfold-for-age z-score calculator <img src="man/figures/zscorer.png" align="right" />
 
 [![Project Status: Active – The project has reached a stable, usable
 state and is being actively
 developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
+[![lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/zscorer)](https://cran.r-project.org/package=zscorer)
+[![CRAN](https://img.shields.io/cran/l/zscorer.svg)](https://CRAN.R-project.org/package=zscorer)
+[![CRAN](http://cranlogs.r-pkg.org/badges/zscorer)](https://CRAN.R-project.org/package=zscorer)
+[![CRAN](http://cranlogs.r-pkg.org/badges/grand-total/zscorer)](https://CRAN.R-project.org/package=zscorer)
 [![Travis-CI Build
 Status](https://travis-ci.org/nutriverse/zscorer.svg?branch=master)](https://travis-ci.org/nutriverse/zscorer)
 [![AppVeyor Build
 Status](https://ci.appveyor.com/api/projects/status/github/nutriverse/zscorer?branch=master&svg=true)](https://ci.appveyor.com/project/nutriverse/zscorer)
 [![codecov](https://codecov.io/gh/nutriverse/zscorer/branch/master/graph/badge.svg)](https://codecov.io/gh/nutriverse/zscorer)
+[![DOI](https://zenodo.org/badge/119683584.svg)](https://zenodo.org/badge/latestdoi/119683584)
 
 `zscorer` facilitates the calculation of `z-scores` (i.e. the number of
-standard deviations from the mean) for the three key anthropometric
-indices used to assess early childhood growth: `weight-for-age (WFA)`,
-`height-for-age (HFA)` and `weight-for-height (WFH)`. `zscorer` refers
-to the results of the **WHO Multicentre Growth Reference Study** as
-standard for calculating the `z-scores` hence it comes packaged with
-this reference data.
+standard deviations from the mean) for key anthropometric indices used
+to assess early childhood growth: `weight-for-age (WFA)`,
+`height-for-age (HFA)`, `weight-for-height (WFH)`, `BMI-for-age (BFA)`,
+`arm circumference-for-age (ACFA)`, `head circumference-for-age (HCFA)`,
+`subscapular skinfold-for-age (SSFA)` and `triceps skinfold-for-age
+(TSFA)`. `zscorer` refers to the results of the **WHO Multicentre Growth
+Reference Study** as standard for calculating the `z-scores` hence it
+comes as a dataset in this package.
 
-`zscorer` can be used to calculate the appropriate `z-score` for the
-corresponding anthropometric index for a single child to assess growth
-and nutritional status against the standard. It can also be used to
-calculate the `z-scores` for an entire cohort or sample of children
-(such as in nutrition surveys) to allow for assessing the nutritional
-status of the entire child population.
+`zscorer` calculates the `z-score` for the corresponding anthropometric
+index given a dataset of children containing anthropometric measurements
+for height, weight, arm circumference, head circumference, subscapular
+skinfold, and triceps skinfold and additional data on age and sex to
+assess growth and nutritional status of the sample of children against
+the WHO Multicentre Growth Reference Study standard (WGS).
+
+`zscorer` also contains functions that calculates the `zscore` for three
+commonly assessed anthropometric indices in nutrition surveys
+(`weight-for-height`, `height-for-age`, `weight-for-age`) given
+anthropometric measurements of individual children. These are legacy
+functions used in earlier versions of `zscorer` that will soon be
+deprecated.
 
 ## Installation
 
-You can install `zscorer` from GitHub with:
+You can install `zscorer` from CRAN:
 
 ``` r
-# install.packages("devtools")
+install.packages("zscorer")
+```
+
+or you can install the development version of `zscorer` from GitHub
+with:
+
+``` r
+if(!require(devtools) { install.packages("devtools") }
 devtools::install_github("nutriverse/zscorer")
 ```
+
+then load `zscorer`
 
 ``` r
 # load package
@@ -43,6 +66,250 @@ library(zscorer)
 ```
 
 ## Usage
+
+### Calculating anthropometric z-scores using the addWGSR() function
+
+The main function in the `zscorer` package is `addWGSR()`.
+
+To demonstrate its usage, we will use the accompanying dataset in
+`zscorer` called `anthro3`. We inspect the dataset as follows:
+
+``` r
+head(anthro3)
+```
+
+which returns:
+
+    #>   psu age sex weight height muac oedema
+    #> 1   1  10   1    5.7   64.2  125      2
+    #> 2   1  10   2    5.8   64.4  121      2
+    #> 3   1   9   2    6.5   62.2  139      2
+    #> 4   1  11   9    6.5   64.9  129      2
+    #> 5   1  24   2    6.5   72.9  120      2
+    #> 6   1  12   2    6.6   69.4  126      2
+
+`anthro3` contains anthropometric data from a Rapid Assessment Method
+(RAM) survey from Burundi.
+
+Anthropometric indices (e.g. weight-for-height z-scores) have not been
+calculated and added to the data.
+
+We will use the `addWGSR()` function to add weight-for-height (wfh)
+z-scores to the example data:
+
+``` r
+svy <- addWGSR(data = anthro3, sex = "sex", firstPart = "weight",
+               secondPart = "height", index = "wfh")
+#> ===========================================================================
+```
+
+A new column named **wfhz** has been added to the dataset:
+
+    #>   psu age sex weight height muac oedema  wfhz
+    #> 1   1  10   1    5.7   64.2  125      2 -2.73
+    #> 2   1  10   2    5.8   64.4  121      2 -2.04
+    #> 3   1   9   2    6.5   62.2  139      2  0.13
+    #> 4   1  11   9    6.5   64.9  129      2    NA
+    #> 5   1  24   2    6.5   72.9  120      2 -3.44
+    #> 6   1  12   2    6.6   69.4  126      2 -2.26
+
+The `wfhz` column contains the weight-for-height (wfh) z-scores
+calculated from the `sex`, `weight`, and `height` columns in the
+`anthro3` dataset. The calculated z-scores are rounded to two decimals
+places unless the `digits` option is used to specify a different
+precision (run `?addWGSR` to see description of various parameters that
+can be specified in the `addWGSR()` function).
+
+The `addWGSR()` function takes up to nine parameters to calculate each
+index separately, depending on the index required. These are described
+in the *Help* files of the `zscorer` package which can be accessed as
+follows:
+
+``` r
+?addWGSR
+```
+
+The **standing** parameter specifies how “stature” (i.e. length or
+height) was measured. If this is not specified, and in some special
+circumstances, height and age rules will be applied when calculating
+z-scores. These rules are described in the table
+below.
+
+ 
+
+| **index**  | **standing** | **age**     | **height**       | **Action**                           |
+| ---------- | ------------ | ----------- | ---------------- | ------------------------------------ |
+| hfa or lfa | standing     | \< 731 days |                  | index = lfa height = height + 0.7 cm |
+| hfa or lfa | supine       | \< 731 days |                  | index = lfa                          |
+| hfa or lfa | unknown      | \< 731 days |                  | index = lfa                          |
+| hfa or lfa | standing     | ≥ 731 days  |                  | index = hfa                          |
+| hfa or lfa | supine       | ≥ 731 days  |                  | index = hfa height = height - 0.7 cm |
+| hfa or lfa | unknown      | ≥ 731 days  |                  | index = hfa                          |
+| wfh or wfl | standing     |             | \< 65 cm         | index = wfl height = height + 0.7 cm |
+| wfh or wfl | standing     |             | ≥ 65 cm          | index = wfh                          |
+| wfh or wfl | supine       |             | ≤ 110 cm         | index = wfl                          |
+| wfh or wfl | supine       |             | more than 110 cm | index = wfh height = height - 0.7 cm |
+| wfh or wfl | unknown      |             | \< 87 cm         | index = wfl                          |
+| wfh or wfl | unknown      |             | ≥ 87 cm          | index = wfh                          |
+| bfa        | standing     | \< 731 days |                  | height = height + 0.7 cm             |
+| bfa        | standing     | ≥ 731 days  |                  | height = height - 0.7 cm             |
+
+ 
+
+The `addWGSR()` function will not produce error messages unless there is
+something very wrong with the data or the specified parameters. If an
+error is encountered in a record then the value **NA** is returned.
+Error conditions are listed in the table
+below.
+
+ 
+
+| **Error condition**                               | **Action**                                                                 |
+| ------------------------------------------------- | -------------------------------------------------------------------------- |
+| Missing or nonsense value in `standing` parameter | Set `standing` to `3` (unknown) and apply appropriate height or age rules. |
+| Unknown `index` specified                         | Return **NA** for z-score.                                                 |
+| Missing `sex`                                     | Return **NA** for z-score.                                                 |
+| Missing `firstPart`                               | Return **NA** for z-score.                                                 |
+| Missing `secondPart`                              | Return **NA** for z-score.                                                 |
+| `sex` is not male (`1`) or female (`2`)           | Return **NA** for z-score.                                                 |
+| `firstPart` is not numeric                        | Return **NA** for z-score.                                                 |
+| `secondPart` is not numeric                       | Return **NA** for z-score.                                                 |
+| Missing `thirdPart` when `index = "bfa"`          | Return **NA** for z-score.                                                 |
+| `thirdPart` is not numeric when `index = "bfa"`   | Return **NA** for z-score.                                                 |
+| `secondPart` is out of range for specified index  | Return **NA** for z-score.                                                 |
+
+ 
+
+We can see this error behaviour using the example data:
+
+``` r
+table(is.na(svy$wfhz))
+#> 
+#> FALSE  TRUE 
+#>   220     1
+```
+
+We can display the problem record:
+
+``` r
+svy[is.na(svy$wfhz), ]
+#>   psu age sex weight height muac oedema wfhz
+#> 4   1  11   9    6.5   64.9  129      2   NA
+```
+
+The problem is due to the value **9** in the `sex` column, which should
+be coded **1** (for male) and **2** (for female). Z-scores are only
+calculated for records with sex specified as either **1** (male) or
+**2** (female). All other values, including **NA**, will return **NA**.
+
+The `addWGSR()` function requires that data are recorded using the
+required units or required codes (see Table Z1).
+
+The `addWGSR()` function will return incorrect values if the data are
+not recorded using the required units. For example, this attempt to add
+weight-for-age z-scores to the example data:
+
+``` r
+svy <- addWGSR(data = svy, sex = "sex", firstPart = "weight", 
+               secondPart = "age", index = "wfa")
+#> ===========================================================================
+```
+
+will give incorrect results:
+
+``` r
+summary(svy$wfaz)
+#>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+#>   3.450   7.692   9.840   9.684  11.430  15.900       1
+```
+
+The odd range of values is due to age being recorded in months rather
+than days.
+
+It is simple to convert all ages from months to days:
+
+``` r
+svy$age <- svy$age * (365.25 / 12)
+head(svy)
+#>   psu      age sex weight height muac oedema  wfhz wfaz
+#> 1   1 304.3750   1    5.7   64.2  125      2 -2.73 3.45
+#> 2   1 304.3750   2    5.8   64.4  121      2 -2.04 3.95
+#> 3   1 273.9375   2    6.5   62.2  139      2  0.13 5.12
+#> 4   1 334.8125   9    6.5   64.9  129      2    NA   NA
+#> 5   1 730.5000   2    6.5   72.9  120      2 -3.44 3.82
+#> 6   1 365.2500   2    6.6   69.4  126      2 -2.26 5.01
+```
+
+before calculating and adding weight-for-age z-scores:
+
+``` r
+svy <- addWGSR(data = svy, sex = "sex", firstPart = "weight", 
+               secondPart = "age", index = "wfa")
+#> ===========================================================================
+head(svy)
+#>   psu      age sex weight height muac oedema  wfhz  wfaz
+#> 1   1 304.3750   1    5.7   64.2  125      2 -2.73 -4.13
+#> 2   1 304.3750   2    5.8   64.4  121      2 -2.04 -3.19
+#> 3   1 273.9375   2    6.5   62.2  139      2  0.13 -1.97
+#> 4   1 334.8125   9    6.5   64.9  129      2    NA    NA
+#> 5   1 730.5000   2    6.5   72.9  120      2 -3.44 -4.61
+#> 6   1 365.2500   2    6.6   69.4  126      2 -2.26 -2.56
+summary(svy$wfaz)
+#>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+#>  -4.610  -1.873  -1.085  -1.154  -0.480   2.600       1
+```
+
+The muac column in the example dataset is recorded in millimetres (mm).
+We need to convert this to centimetres (cm):
+
+``` r
+svy$muac <- svy$muac / 10
+head(svy)
+#>   psu      age sex weight height muac oedema  wfhz  wfaz
+#> 1   1 304.3750   1    5.7   64.2 12.5      2 -2.73 -4.13
+#> 2   1 304.3750   2    5.8   64.4 12.1      2 -2.04 -3.19
+#> 3   1 273.9375   2    6.5   62.2 13.9      2  0.13 -1.97
+#> 4   1 334.8125   9    6.5   64.9 12.9      2    NA    NA
+#> 5   1 730.5000   2    6.5   72.9 12.0      2 -3.44 -4.61
+#> 6   1 365.2500   2    6.6   69.4 12.6      2 -2.26 -2.56
+```
+
+before using the `addWGS()` function to calculate MUAC-for-age z-scores:
+
+``` r
+svy <- addWGSR(svy, sex = "sex", firstPart = "muac",    
+               secondPart = "age", index = "mfa")
+#> ===========================================================================
+head(svy)
+#>   psu      age sex weight height muac oedema  wfhz  wfaz  mfaz
+#> 1   1 304.3750   1    5.7   64.2 12.5      2 -2.73 -4.13 -1.97
+#> 2   1 304.3750   2    5.8   64.4 12.1      2 -2.04 -3.19 -1.88
+#> 3   1 273.9375   2    6.5   62.2 13.9      2  0.13 -1.97 -0.14
+#> 4   1 334.8125   9    6.5   64.9 12.9      2    NA    NA    NA
+#> 5   1 730.5000   2    6.5   72.9 12.0      2 -3.44 -4.61 -2.70
+#> 6   1 365.2500   2    6.6   69.4 12.6      2 -2.26 -2.56 -1.46
+```
+
+As a last example we will use the `addWGSR()` function to add body mass
+index-for-age (bfa) z-scores to the data to create a new variable called
+bmiAgeZ with a precision of 4 decimal places as:
+
+``` r
+svy <- addWGSR(data = svy, sex = "sex", firstPart = "weight", 
+               secondPart = "height", thirdPart = "age", index = "bfa", 
+               output = "bmiAgeZ", digits = 4)
+#> ===========================================================================
+head(svy)
+#>   psu      age sex weight height muac oedema  wfhz  wfaz  mfaz bmiAgeZ
+#> 1   1 304.3750   1    5.7   64.2 12.5      2 -2.73 -4.13 -1.97 -2.6928
+#> 2   1 304.3750   2    5.8   64.4 12.1      2 -2.04 -3.19 -1.88 -2.0005
+#> 3   1 273.9375   2    6.5   62.2 13.9      2  0.13 -1.97 -0.14  0.0405
+#> 4   1 334.8125   9    6.5   64.9 12.9      2    NA    NA    NA      NA
+#> 5   1 730.5000   2    6.5   72.9 12.0      2 -3.44 -4.61 -2.70 -2.8958
+#> 6   1 365.2500   2    6.6   69.4 12.6      2 -2.26 -2.56 -1.46 -2.0796
+```
+
+## Usage - legacy functions
 
 ### Calculating z-score for each of the three anthropometric indices for a single child
 
@@ -118,27 +385,17 @@ waz <- getCohortWGS(data = anthro1,
                     firstPart = "weight",
                     secondPart = "age",
                     index = "wfa")
-head(waz, 100)
-#>   [1] -0.75605549 -1.39021503 -1.05597853  1.41575096 -2.67757242
-#>   [6]  1.49238050 -0.12987704 -0.02348159 -1.50647344 -1.54381630
-#>  [11] -2.87495712 -0.43497240 -1.03899540 -1.69281855 -1.31245898
-#>  [16] -2.21003260 -0.01189226 -0.90917762 -0.67839855 -0.94746695
-#>  [21] -2.49960425 -0.95659644 -1.65442686 -1.25052760  0.67335751
-#>  [26]  0.30156301  0.24261346 -2.78670709 -1.15820651 -1.15477183
-#>  [31] -1.35540820 -0.59134959 -4.14967218 -0.45748752 -0.74331669
-#>  [36] -1.69725836 -1.05745067 -0.18869508 -0.42095770 -2.21030414
-#>  [41] -1.30536715 -3.63778143 -0.60662526 -0.54360470 -1.59171780
-#>  [46] -1.74745738 -0.34803338  0.69896149 -0.74467130  0.18924572
-#>  [51] -1.48108856 -1.95753145 -1.31191261  0.30155484 -0.75789033
-#>  [56] -1.22636337 -1.27478781 -0.14553210 -1.30480818 -1.96209188
-#>  [61] -1.92834685 -1.04554156 -1.39728978 -1.48108856 -0.74937250
-#>  [66] -1.12503757 -2.77630042 -0.19882637  0.04219576 -0.52194533
-#>  [71] -1.46503158  0.85408718 -1.63719475  0.31409860 -0.81222767
-#>  [76] -1.00226314 -0.44722087 -1.17228171 -2.15312212 -1.81820158
-#>  [81] -1.13196874 -2.86880551 -0.73555123 -2.43022105 -2.87277187
-#>  [86] -0.94346572 -2.74866250 -2.55061273 -1.96711064 -3.36531123
-#>  [91]  0.74108076  0.23397040 -1.16961511 -1.54368475 -0.50193697
-#>  [96] -2.80497696 -1.89582784 -1.71342724 -1.87269440 -1.64834830
+head(waz, 50)
+#>  [1] -0.75605549 -1.39021503 -1.05597853  1.41575096 -2.67757242
+#>  [6]  1.49238050 -0.12987704 -0.02348159 -1.50647344 -1.54381630
+#> [11] -2.87495712 -0.43497240 -1.03899540 -1.69281855 -1.31245898
+#> [16] -2.21003260 -0.01189226 -0.90917762 -0.67839855 -0.94746695
+#> [21] -2.49960425 -0.95659644 -1.65442686 -1.25052760  0.67335751
+#> [26]  0.30156301  0.24261346 -2.78670709 -1.15820651 -1.15477183
+#> [31] -1.35540820 -0.59134959 -4.14967218 -0.45748752 -0.74331669
+#> [36] -1.69725836 -1.05745067 -0.18869508 -0.42095770 -2.21030414
+#> [41] -1.30536715 -3.63778143 -0.60662526 -0.54360470 -1.59171780
+#> [46] -1.74745738 -0.34803338  0.69896149 -0.74467130  0.18924572
 
 # height-for-age z-score
 haz <- getCohortWGS(data = anthro1,
@@ -146,24 +403,16 @@ haz <- getCohortWGS(data = anthro1,
                     firstPart = "height",
                     secondPart = "age",
                     index = "hfa")
-head(haz, 100)
-#>   [1] -1.2258169 -2.3475886 -2.9518041 -0.2812852 -4.2056663 -0.5387678
-#>   [7] -2.4020719 -1.0317699 -2.7410884 -4.7037571 -2.5670550 -2.1144960
-#>  [13] -2.2323505 -2.3155458 -2.7516165 -2.7930694  0.1121349 -1.9001797
-#>  [19] -2.9543730 -1.9671042 -3.8716522  0.8667206 -2.8252069 -2.1412285
-#>  [25] -2.7994643  0.5496459 -1.4372002 -3.7979410 -2.5661752 -1.8301183
-#>  [31] -1.6548589 -2.7110333 -3.6399642 -1.7955069 -1.6775100 -1.0317699
-#>  [37] -0.4356881 -1.2660152  0.4990326 -4.6085660 -3.1662351 -1.0695930
-#>  [43] -1.8477936 -2.5502314 -1.8301183 -2.2755493 -3.2816532  0.4876774
-#>  [49] -2.4396410 -0.4794744 -2.4504293 -3.2053429 -3.7694306 -0.2775228
-#>  [55] -0.3653868 -2.5815827 -1.7775775 -0.9547536 -2.9599613 -3.1402709
-#>  [61] -2.3778709 -2.1873064 -2.5585381 -2.1806622 -3.2376529 -2.2634845
-#>  [67] -4.2000053 -0.2809011 -3.5180432 -0.2437781 -1.0543764  0.1812499
-#>  [73] -2.4859766 -1.6141514 -2.9928210 -2.4559038 -1.9683112 -1.2081507
-#>  [79] -2.3460874 -2.1919714 -2.6264961 -4.6629238 -2.2110628 -3.9605986
-#>  [85] -3.1007498 -4.5234491 -1.4755486 -0.3554714 -2.5744381 -1.8393933
-#>  [91] -1.4619629  2.2883058 -2.7007990 -2.4477333 -1.4001563 -2.8679887
-#>  [97] -2.9823031 -3.3465111 -4.0111758 -3.2849746
+head(haz, 50)
+#>  [1] -1.2258169 -2.3475886 -2.9518041 -0.2812852 -4.2056663 -0.5387678
+#>  [7] -2.4020719 -1.0317699 -2.7410884 -4.7037571 -2.5670550 -2.1144960
+#> [13] -2.2323505 -2.3155458 -2.7516165 -2.7930694  0.1121349 -1.9001797
+#> [19] -2.9543730 -1.9671042 -3.8716522  0.8667206 -2.8252069 -2.1412285
+#> [25] -2.7994643  0.5496459 -1.4372002 -3.7979410 -2.5661752 -1.8301183
+#> [31] -1.6548589 -2.7110333 -3.6399642 -1.7955069 -1.6775100 -1.0317699
+#> [37] -0.4356881 -1.2660152  0.4990326 -4.6085660 -3.1662351 -1.0695930
+#> [43] -1.8477936 -2.5502314 -1.8301183 -2.2755493 -3.2816532  0.4876774
+#> [49] -2.4396410 -0.4794744
 
 # weight-for-height z-score
 whz <- getCohortWGS(data = anthro1,
@@ -171,27 +420,17 @@ whz <- getCohortWGS(data = anthro1,
                     firstPart = "weight",
                     secondPart = "height",
                     index = "wfh")
-head(whz, 100)
-#>   [1]  0.05572347 -0.01974903  0.57469112  2.06231749 -0.14080044
-#>   [6]  2.49047246  1.83315197  0.93614891  0.18541943  2.11599287
-#>  [11] -1.96943887  1.06351047  0.35315830 -0.61151003 -0.01049441
-#>  [16] -0.75038993 -0.08000322  0.31277573  1.56456175  0.22152087
-#>  [21] -0.08798757 -2.14197877 -0.30804823  0.00778227  3.21041413
-#>  [26]  0.07434468  1.40966986 -0.81485050  0.63816647 -0.33540392
-#>  [31] -0.61955533  1.35716952 -2.77364671  1.00831095  0.32842063
-#>  [36] -1.66705281 -1.21157702  0.89024472 -0.89865037  0.82166393
-#>  [41]  0.64442137 -4.39847850  0.38411140  1.48299847 -0.93068495
-#>  [46] -0.88558228  1.69551410  0.65143649  0.61269397  0.59813891
-#>  [51] -0.16870101 -0.46773224  1.13627735  0.54232333 -0.80009135
-#>  [56]  0.47707364 -0.25223237  0.66626720  0.66470505 -0.56540523
-#>  [61] -0.89349250  0.37679942 -0.24183183 -0.41797799  1.97179223
-#>  [66]  0.34774287 -0.12696756 -0.02952866  2.29889761 -0.56117231
-#>  [71] -1.31702435  1.14195630 -0.07450720  1.74085848  1.53381730
-#>  [76]  0.59110113  0.95232463 -0.81485050 -1.04399868 -0.91463927
-#>  [81]  0.16190475  0.12223112  0.90273984  0.01878726 -1.87000837
-#>  [86]  2.12145198 -2.71413265 -3.48161993 -0.77282038 -3.16923427
-#>  [91]  2.52441543 -1.38629620  0.67083591 -0.49272967  0.50468135
-#>  [96] -1.84875292 -0.07768210  0.58570137  1.40004194  0.44765879
+head(whz, 50)
+#>  [1]  0.05572347 -0.01974903  0.57469112  2.06231749 -0.14080044
+#>  [6]  2.49047246  1.83315197  0.93614891  0.18541943  2.11599287
+#> [11] -1.96943887  1.06351047  0.35315830 -0.61151003 -0.01049441
+#> [16] -0.75038993 -0.08000322  0.31277573  1.56456175  0.22152087
+#> [21] -0.08798757 -2.14197877 -0.30804823  0.00778227  3.21041413
+#> [26]  0.07434468  1.40966986 -0.81485050  0.63816647 -0.33540392
+#> [31] -0.61955533  1.35716952 -2.77364671  1.00831095  0.32842063
+#> [36] -1.66705281 -1.21157702  0.89024472 -0.89865037  0.82166393
+#> [41]  0.64442137 -4.39847850  0.38411140  1.48299847 -0.93068495
+#> [46] -0.88558228  1.69551410  0.65143649  0.61269397  0.59813891
 ```
 
 Applying the `getCohortWGS()` function results in a vector of calculated
@@ -211,108 +450,28 @@ zScores <- getAllWGS(data = anthro1,
                      height = "height",
                      age = "age",
                      index = "all")
-head(zScores, 100)
-#>             waz        haz         whz
-#> 1   -0.75605549 -1.2258169  0.05572347
-#> 2   -1.39021503 -2.3475886 -0.01974903
-#> 3   -1.05597853 -2.9518041  0.57469112
-#> 4    1.41575096 -0.2812852  2.06231749
-#> 5   -2.67757242 -4.2056663 -0.14080044
-#> 6    1.49238050 -0.5387678  2.49047246
-#> 7   -0.12987704 -2.4020719  1.83315197
-#> 8   -0.02348159 -1.0317699  0.93614891
-#> 9   -1.50647344 -2.7410884  0.18541943
-#> 10  -1.54381630 -4.7037571  2.11599287
-#> 11  -2.87495712 -2.5670550 -1.96943887
-#> 12  -0.43497240 -2.1144960  1.06351047
-#> 13  -1.03899540 -2.2323505  0.35315830
-#> 14  -1.69281855 -2.3155458 -0.61151003
-#> 15  -1.31245898 -2.7516165 -0.01049441
-#> 16  -2.21003260 -2.7930694 -0.75038993
-#> 17  -0.01189226  0.1121349 -0.08000322
-#> 18  -0.90917762 -1.9001797  0.31277573
-#> 19  -0.67839855 -2.9543730  1.56456175
-#> 20  -0.94746695 -1.9671042  0.22152087
-#> 21  -2.49960425 -3.8716522 -0.08798757
-#> 22  -0.95659644  0.8667206 -2.14197877
-#> 23  -1.65442686 -2.8252069 -0.30804823
-#> 24  -1.25052760 -2.1412285  0.00778227
-#> 25   0.67335751 -2.7994643  3.21041413
-#> 26   0.30156301  0.5496459  0.07434468
-#> 27   0.24261346 -1.4372002  1.40966986
-#> 28  -2.78670709 -3.7979410 -0.81485050
-#> 29  -1.15820651 -2.5661752  0.63816647
-#> 30  -1.15477183 -1.8301183 -0.33540392
-#> 31  -1.35540820 -1.6548589 -0.61955533
-#> 32  -0.59134959 -2.7110333  1.35716952
-#> 33  -4.14967218 -3.6399642 -2.77364671
-#> 34  -0.45748752 -1.7955069  1.00831095
-#> 35  -0.74331669 -1.6775100  0.32842063
-#> 36  -1.69725836 -1.0317699 -1.66705281
-#> 37  -1.05745067 -0.4356881 -1.21157702
-#> 38  -0.18869508 -1.2660152  0.89024472
-#> 39  -0.42095770  0.4990326 -0.89865037
-#> 40  -2.21030414 -4.6085660  0.82166393
-#> 41  -1.30536715 -3.1662351  0.64442137
-#> 42  -3.63778143 -1.0695930 -4.39847850
-#> 43  -0.60662526 -1.8477936  0.38411140
-#> 44  -0.54360470 -2.5502314  1.48299847
-#> 45  -1.59171780 -1.8301183 -0.93068495
-#> 46  -1.74745738 -2.2755493 -0.88558228
-#> 47  -0.34803338 -3.2816532  1.69551410
-#> 48   0.69896149  0.4876774  0.65143649
-#> 49  -0.74467130 -2.4396410  0.61269397
-#> 50   0.18924572 -0.4794744  0.59813891
-#> 51  -1.48108856 -2.4504293 -0.16870101
-#> 52  -1.95753145 -3.2053429 -0.46773224
-#> 53  -1.31191261 -3.7694306  1.13627735
-#> 54   0.30155484 -0.2775228  0.54232333
-#> 55  -0.75789033 -0.3653868 -0.80009135
-#> 56  -1.22636337 -2.5815827  0.47707364
-#> 57  -1.27478781 -1.7775775 -0.25223237
-#> 58  -0.14553210 -0.9547536  0.66626720
-#> 59  -1.30480818 -2.9599613  0.66470505
-#> 60  -1.96209188 -3.1402709 -0.56540523
-#> 61  -1.92834685 -2.3778709 -0.89349250
-#> 62  -1.04554156 -2.1873064  0.37679942
-#> 63  -1.39728978 -2.5585381 -0.24183183
-#> 64  -1.48108856 -2.1806622 -0.41797799
-#> 65  -0.74937250 -3.2376529  1.97179223
-#> 66  -1.12503757 -2.2634845  0.34774287
-#> 67  -2.77630042 -4.2000053 -0.12696756
-#> 68  -0.19882637 -0.2809011 -0.02952866
-#> 69   0.04219576 -3.5180432  2.29889761
-#> 70  -0.52194533 -0.2437781 -0.56117231
-#> 71  -1.46503158 -1.0543764 -1.31702435
-#> 72   0.85408718  0.1812499  1.14195630
-#> 73  -1.63719475 -2.4859766 -0.07450720
-#> 74   0.31409860 -1.6141514  1.74085848
-#> 75  -0.81222767 -2.9928210  1.53381730
-#> 76  -1.00226314 -2.4559038  0.59110113
-#> 77  -0.44722087 -1.9683112  0.95232463
-#> 78  -1.17228171 -1.2081507 -0.81485050
-#> 79  -2.15312212 -2.3460874 -1.04399868
-#> 80  -1.81820158 -2.1919714 -0.91463927
-#> 81  -1.13196874 -2.6264961  0.16190475
-#> 82  -2.86880551 -4.6629238  0.12223112
-#> 83  -0.73555123 -2.2110628  0.90273984
-#> 84  -2.43022105 -3.9605986  0.01878726
-#> 85  -2.87277187 -3.1007498 -1.87000837
-#> 86  -0.94346572 -4.5234491  2.12145198
-#> 87  -2.74866250 -1.4755486 -2.71413265
-#> 88  -2.55061273 -0.3554714 -3.48161993
-#> 89  -1.96711064 -2.5744381 -0.77282038
-#> 90  -3.36531123 -1.8393933 -3.16923427
-#> 91   0.74108076 -1.4619629  2.52441543
-#> 92   0.23397040  2.2883058 -1.38629620
-#> 93  -1.16961511 -2.7007990  0.67083591
-#> 94  -1.54368475 -2.4477333 -0.49272967
-#> 95  -0.50193697 -1.4001563  0.50468135
-#> 96  -2.80497696 -2.8679887 -1.84875292
-#> 97  -1.89582784 -2.9823031 -0.07768210
-#> 98  -1.71342724 -3.3465111  0.58570137
-#> 99  -1.87269440 -4.0111758  1.40004194
-#> 100 -1.64834830 -3.2849746  0.44765879
+head(zScores, 20)
+#>            waz        haz         whz
+#> 1  -0.75605549 -1.2258169  0.05572347
+#> 2  -1.39021503 -2.3475886 -0.01974903
+#> 3  -1.05597853 -2.9518041  0.57469112
+#> 4   1.41575096 -0.2812852  2.06231749
+#> 5  -2.67757242 -4.2056663 -0.14080044
+#> 6   1.49238050 -0.5387678  2.49047246
+#> 7  -0.12987704 -2.4020719  1.83315197
+#> 8  -0.02348159 -1.0317699  0.93614891
+#> 9  -1.50647344 -2.7410884  0.18541943
+#> 10 -1.54381630 -4.7037571  2.11599287
+#> 11 -2.87495712 -2.5670550 -1.96943887
+#> 12 -0.43497240 -2.1144960  1.06351047
+#> 13 -1.03899540 -2.2323505  0.35315830
+#> 14 -1.69281855 -2.3155458 -0.61151003
+#> 15 -1.31245898 -2.7516165 -0.01049441
+#> 16 -2.21003260 -2.7930694 -0.75038993
+#> 17 -0.01189226  0.1121349 -0.08000322
+#> 18 -0.90917762 -1.9001797  0.31277573
+#> 19 -0.67839855 -2.9543730  1.56456175
+#> 20 -0.94746695 -1.9671042  0.22152087
 ```
 
 Applying the `getAllWGS()` function results in a data frame of
