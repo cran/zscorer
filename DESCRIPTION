@@ -1,7 +1,7 @@
 Package: zscorer
 Type: Package
 Title: Child Anthropometry z-Score Calculator
-Version: 0.2.0
+Version: 0.3.0
 Authors@R: c(
     person("Mark", "Myatt", email = "mark@brixtonhealth.com", role = "aut"),
     person("Ernest", "Guevarra", comment = c(ORCID = "0000-0002-4887-4415"), 
@@ -12,8 +12,8 @@ Description: A tool for calculating z-scores and centiles for weight-for-age,
     subscapular skinfold-for-age, triceps skinfold-for-age based on the 
     WHO Child Growth Standards. 
 Depends: R (>= 2.10)
-Imports: tidyr
-Suggests: testthat, knitr, rmarkdown, shiny, shinythemes, covr
+Imports: shiny
+Suggests: testthat, knitr, rmarkdown, shinythemes, covr
 License: AGPL-3
 Encoding: UTF-8
 LazyData: true
@@ -22,9 +22,9 @@ URL: https://github.com/nutriverse/zscorer
 BugReports: https://github.com/nutriverse/zscorer/issues
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2018-11-26 12:05:08 UTC; ernest
+Packaged: 2019-09-28 16:47:08 UTC; ernest
 Author: Mark Myatt [aut],
   Ernest Guevarra [aut, cre] (<https://orcid.org/0000-0002-4887-4415>)
 Maintainer: Ernest Guevarra <ernestgmd@gmail.com>
 Repository: CRAN
-Date/Publication: 2018-11-26 13:10:02 UTC
+Date/Publication: 2019-09-28 17:10:02 UTC
