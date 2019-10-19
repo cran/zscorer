@@ -1,10 +1,13 @@
 Package: zscorer
 Type: Package
 Title: Child Anthropometry z-Score Calculator
-Version: 0.3.0
+Version: 0.3.1
 Authors@R: c(
-    person("Mark", "Myatt", email = "mark@brixtonhealth.com", role = "aut"),
-    person("Ernest", "Guevarra", comment = c(ORCID = "0000-0002-4887-4415"), 
+    person("Mark", "Myatt", email = "mark@brixtonhealth.com",
+           comment = c(ORCID = "0000-0003-1119-1474"),
+           role = c("aut", "cph")),
+    person("Ernest", "Guevarra", 
+           comment = c(ORCID = "0000-0002-4887-4415"), 
            email = "ernestgmd@gmail.com", role = c("aut", "cre")))
 Description: A tool for calculating z-scores and centiles for weight-for-age, 
     length/height-for-age, weight-for-length/height, BMI-for-age, 
@@ -22,9 +25,9 @@ URL: https://github.com/nutriverse/zscorer
 BugReports: https://github.com/nutriverse/zscorer/issues
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2019-09-28 16:47:08 UTC; ernest
-Author: Mark Myatt [aut],
+Packaged: 2019-10-19 06:01:43 UTC; ernest
+Author: Mark Myatt [aut, cph] (<https://orcid.org/0000-0003-1119-1474>),
   Ernest Guevarra [aut, cre] (<https://orcid.org/0000-0002-4887-4415>)
 Maintainer: Ernest Guevarra <ernestgmd@gmail.com>
 Repository: CRAN
-Date/Publication: 2019-09-28 17:10:02 UTC
+Date/Publication: 2019-10-19 06:20:02 UTC

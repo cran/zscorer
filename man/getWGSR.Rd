@@ -5,7 +5,7 @@
 \title{Calculate WHO Growth Reference z-score for a given anthropometric
 measurement.}
 \usage{
-getWGSR(sex, firstPart, secondPart, index = NA, standing,
+getWGSR(sex, firstPart, secondPart, index = NA, standing = NA,
   thirdPart = NA)
 }
 \arguments{
@@ -54,12 +54,13 @@ getWGSR(sex, firstPart, secondPart, index = NA, standing,
  Give a quoted index name as in (e.g.) \code{"wfh"}.}
 
 \item{standing}{Variable specifying how stature was measured. If NULL then age
-(for \code{"hfa"} or \code{"lfa"}) or height rules (for \code{"wfh"} or
-\code{"wfl"}) will be applied. This must be coded as \code{1 = Standing};
-\code{2 = Supine}; \code{3 = Unknown}. All other values will be recoded to
-\code{3 = Unknown}. Give a quoted variable name as in (e.g.) \code{"measured"}
-or a single value (e.g.\code{"measured = 1"}). If no value (or NULL) is
-specified then height and age rules will be applied.}
+  (for \code{"hfa"} or \code{"lfa"}) or height rules (for \code{"wfh"} or
+  \code{"wfl"}) will be applied. This must be coded as \code{1 = Standing};
+  \code{2 = Supine}; \code{3 = Unknown}. All other values will be recoded to
+  \code{3 = Unknown}. Give a quoted variable name as in (e.g.) \code{"measured"}
+  or a single value (e.g.\code{"measured = 1"}). If no value (or NULL) is
+  specified then height and age rules will be applied.
+zz}
 
 \item{thirdPart}{Name of variable specifying age (in days) for BMI/A. Give a
 quoted variable name as in (e.g.) \code{"age"}. Be careful with units
@@ -97,5 +98,11 @@ getWGSR(sex = 1,
         secondPart = 10,
         index = "hfa",
         standing = 3)
+
+# Calculate MUAC-for-age z-score for a girl
+getWGSR(sex = 1,
+        firstPart = 20,
+        secondPart = 62 * (365.25 / 12),
+        index = "mfa")
 
 }
